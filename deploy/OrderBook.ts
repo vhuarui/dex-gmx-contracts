@@ -1,3 +1,4 @@
+import { parseUnits } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -39,7 +40,7 @@ const deployFunction: DeployFunction = async function ({
       vault.address, // vault
       tokens.nativeToken.address, // weth
       usdg.address, // usdg
-      '10000000000000000', // 0.01
+      parseUnits('0.0003', 18), // 0.0003
       expandDecimals(10, 30), // min purchase token amount usd
     ),
     'orderBook.initialize',

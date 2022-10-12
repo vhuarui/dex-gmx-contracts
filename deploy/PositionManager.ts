@@ -1,9 +1,14 @@
+import { BigNumber } from 'ethers'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { sendTxn } from '../utils/helper'
+import { expandDecimals, sendTxn } from '../utils/helper'
 
-const deployFunction: DeployFunction = async function ({ deployments, network, getNamedAccounts }: HardhatRuntimeEnvironment) {
+const deployFunction: DeployFunction = async function ({
+  deployments,
+  network,
+  getNamedAccounts,
+}: HardhatRuntimeEnvironment) {
   console.log('Running PositionManager deploy script')
 
   const tokens = require('../config/tokens.json')[network.name || 'fantomtest']
@@ -11,6 +16,9 @@ const deployFunction: DeployFunction = async function ({ deployments, network, g
 
   const { deployer } = await getNamedAccounts()
   // console.log('Deployer:', deployer)
+
+  const { btc, eth, link, usdc, ftm } = tokens
+  const tokenArr = [btc, eth, link, usdc, ftm]
 
   const depositFee = 30 // 0.3%
   const orderKeeper = { address: deployer }
@@ -39,10 +47,29 @@ const deployFunction: DeployFunction = async function ({ deployments, network, g
     'positionManager.setOrderKeeper(orderKeeper)',
   )
   await sendTxn(positionManager.setLiquidator(liquidator.address, true), 'positionManager.setLiquidator(liquidator)')
-  // await sendTxn(timelock.setContractHandler(positionManager.address, true), "timelock.setContractHandler(positionRouter)")
-  // await sendTxn(timelock.setLiquidator(vault.address, positionManager.address, true), "timelock.setLiquidator(vault, positionManager, true)")
   await sendTxn(vault.setLiquidator(positionManager.address, true), 'vault.setLiquidator(positionManager, true)')
   await sendTxn(router.addPlugin(positionManager.address), 'router.addPlugin(positionManager)')
+
+  const tokenAddresses = tokenArr.map((t) => t.address)
+  const longSizes = tokenArr.map((token) => {
+    if (!token.maxGlobalLongSize) {
+      return BigNumber.from(0)
+    }
+
+    return expandDecimals(token.maxGlobalLongSize, 30)
+  })
+
+  const shortSizes = tokenArr.map((token) => {
+    if (!token.maxGlobalShortSize) {
+      return BigNumber.from(0)
+    }
+
+    return expandDecimals(token.maxGlobalShortSize, 30)
+  })
+  await sendTxn(
+    positionManager.setMaxGlobalSizes(tokenAddresses, longSizes, shortSizes),
+    'positionManager.setMaxGlobalSizes',
+  )
 }
 
 export default deployFunction

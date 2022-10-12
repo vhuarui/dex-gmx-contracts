@@ -40,6 +40,10 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
   await sendTxn(vault.setGov(timeLock.address), `vault.setGov`)
 
   await sendTxn(
+    timeLock.setShouldToggleIsLeverageEnabled(true),
+    'deployedTimelock.setShouldToggleIsLeverageEnabled(true)',
+  )
+  await sendTxn(
     timeLock.setContractHandler(positionRouter.address, true),
     'timelock.setContractHandler(positionRouter)',
   )
