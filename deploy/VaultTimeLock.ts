@@ -22,13 +22,13 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
     // waitConfirmations: 3,
     args: [
       admin, // admin
-      5 * 24 * 60 * 60, // buffer
+      24 * 60 * 60, // buffer
       tokenManager.address, // tokenManager
       tokenManager.address, // mintReceiver
       glpManager.address, // glpManager
       1000, // maxTokenSupply
       10, // marginFeeBasisPoints
-      100, // maxMarginFeeBasisPoints
+      500, // maxMarginFeeBasisPoints
     ],
   })
 

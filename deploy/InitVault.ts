@@ -29,14 +29,14 @@ const deployFunction: DeployFunction = async function ({ getNamedAccounts }: Har
   await sendTxn(vault.setFundingRate(60 * 60, 100, 100), 'vault.setFundingRate')
   await sendTxn(
     vault.setFees(
-      10, // _taxBasisPoints
+      50, // _taxBasisPoints
       5, // _stableTaxBasisPoints
-      20, // _mintBurnFeeBasisPoints
-      20, // _swapFeeBasisPoints
+      25, // _mintBurnFeeBasisPoints
+      30, // _swapFeeBasisPoints
       1, // _stableSwapFeeBasisPoints
       10, // _marginFeeBasisPoints
-      toUsd(2), // _liquidationFeeUsd
-      24 * 60 * 60, // _minProfitTime
+      toUsd(5), // _liquidationFeeUsd
+      3 * 60 * 60, // _minProfitTime
       true, // _hasDynamicFees
     ),
     'vault.setFees',
