@@ -1,7 +1,7 @@
 import { task } from 'hardhat/config'
 import { NomicLabsHardhatPluginError } from 'hardhat/plugins'
 
-task('verify:all', 'Verify all contracts', async (_, {ethers, run }) => {
+task('verify:all', 'Verify all contracts', async (_, { ethers, run }) => {
   const network = process.env.HARDHAT_NETWORK || 'fantomtest'
   const tokens = require('../config/tokens.json')[network]
   const wftm = tokens.nativeToken
@@ -21,6 +21,9 @@ task('verify:all', 'Verify all contracts', async (_, {ethers, run }) => {
   const fastPriceFeed = await ethers.getContract('FastPriceFeed')
   const referralStorage = await ethers.getContract('ReferralStorage')
   const referralReader = await ethers.getContract('ReferralReader')
+  const orderBookReader = await ethers.getContract('OrderBookReader')
+  const vaultReader = await ethers.getContract('VaultReader')
+  const reader = await ethers.getContract('Reader')
 
   const contracts: {
     name: string
@@ -85,7 +88,7 @@ task('verify:all', 'Verify all contracts', async (_, {ethers, run }) => {
     {
       name: 'TokenManager',
       address: tokenManager.address,
-      constructorArguments: ['4'],
+      constructorArguments: ['1'],
     },
     {
       name: 'FastPriceEvents',
@@ -113,6 +116,21 @@ task('verify:all', 'Verify all contracts', async (_, {ethers, run }) => {
     {
       name: 'ReferralReader',
       address: referralReader.address,
+      constructorArguments: [],
+    },
+    {
+      name: 'OrderBookReader',
+      address: orderBookReader.address,
+      constructorArguments: [],
+    },
+    {
+      name: 'VaultReader',
+      address: vaultReader.address,
+      constructorArguments: [],
+    },
+    {
+      name: 'Reader',
+      address: reader.address,
       constructorArguments: [],
     },
   ]
