@@ -2,13 +2,15 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { sendTxn } from '../utils/helper'
+import { contractConfigs } from '../config/contractConfigs'
 
-const deployFunction: DeployFunction = async function ({ deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
+const deployFunction: DeployFunction = async function ({ deployments, network, getNamedAccounts }: HardhatRuntimeEnvironment) {
   console.log('Running Vault TimeLock deploy script')
   const { deploy } = deployments
 
   const { deployer, admin } = await getNamedAccounts()
   // console.log('Deployer:', deployer)
+  const contractConfig = contractConfigs[network.name || 'fantomtest']
 
   const vault = await ethers.getContract('Vault')
   const tokenManager = await ethers.getContract('TokenManager')
@@ -21,14 +23,14 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
     skipIfAlreadyDeployed: false,
     // waitConfirmations: 3,
     args: [
-      admin, // admin
-      24 * 60 * 60, // buffer
+      deployer, // admin
+      contractConfig.vaultTimeLock.buffer, // buffer
       tokenManager.address, // tokenManager
       tokenManager.address, // mintReceiver
       glpManager.address, // glpManager
-      1000, // maxTokenSupply
-      10, // marginFeeBasisPoints
-      500, // maxMarginFeeBasisPoints
+      contractConfig.vaultTimeLock.maxTokenSupply, // maxTokenSupply
+      contractConfig.vault.marginFeeBasisPoints, // marginFeeBasisPoints
+      contractConfig.vaultTimeLock.maxMarginFeeBasisPoints, // maxMarginFeeBasisPoints
     ],
   })
 

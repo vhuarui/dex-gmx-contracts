@@ -3,6 +3,7 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { expandDecimals, sendTxn } from '../utils/helper'
+import { contractConfigs } from '../config/contractConfigs'
 
 const deployFunction: DeployFunction = async function ({
   deployments,
@@ -13,6 +14,7 @@ const deployFunction: DeployFunction = async function ({
 
   const tokens = require('../config/tokens.json')[network.name || 'fantomtest']
   const { deploy } = deployments
+  const contractConfig = contractConfigs[network.name || 'fantomtest']
 
   const { deployer } = await getNamedAccounts()
   // console.log('Deployer:', deployer)
@@ -20,9 +22,9 @@ const deployFunction: DeployFunction = async function ({
   const { btc, eth, link, usdc, ftm } = tokens
   const tokenArr = [btc, eth, link, usdc, ftm]
 
-  const depositFee = 30 // 0.3%
-  const orderKeeper = { address: deployer }
-  const liquidator = { address: deployer }
+  const depositFee = contractConfig.positionManager.depositFee
+  const orderKeeper = { address: contractConfig.positionManager.orderKeeper }
+  const liquidator = { address: contractConfig.positionManager.liquidator }
 
   const vault = await ethers.getContract('Vault')
   const router = await ethers.getContract('Router')

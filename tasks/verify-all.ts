@@ -1,9 +1,11 @@
 import { task } from 'hardhat/config'
 import { NomicLabsHardhatPluginError } from 'hardhat/plugins'
+import { contractConfigs } from '../config/contractConfigs'
 
-task('verify:all', 'Verify all contracts', async (_, { ethers, run }) => {
-  const network = process.env.HARDHAT_NETWORK || 'fantomtest'
-  const tokens = require('../config/tokens.json')[network]
+task('verify:all', 'Verify all contracts', async (_, { ethers, network, run }) => {
+  const tokens = require('../config/tokens.json')[network.name || 'fantomtest']
+  const contractConfig = contractConfigs[network.name || 'fantomtest']
+
   const wftm = tokens.nativeToken
   const vault = await ethers.getContract('Vault')
   const usdg = await ethers.getContract('USDG')
@@ -58,7 +60,7 @@ task('verify:all', 'Verify all contracts', async (_, { ethers, run }) => {
     {
       name: 'GlpManager',
       address: glpManager.address,
-      constructorArguments: [vault.address, usdg.address, glp.address, String(15 * 60)],
+      constructorArguments: [vault.address, usdg.address, glp.address, String(contractConfig.glpManager.cooldownDuration)],
     },
     {
       name: 'VaultErrorController',
@@ -78,17 +80,17 @@ task('verify:all', 'Verify all contracts', async (_, { ethers, run }) => {
     {
       name: 'PositionManager',
       address: positionManager.address,
-      constructorArguments: [vault.address, router.address, wftm.address, '30', orderBook.address],
+      constructorArguments: [vault.address, router.address, wftm.address, String(contractConfig.positionManager.depositFee), orderBook.address],
     },
     {
       name: 'PositionRouter',
       address: positionRouter.address,
-      constructorArguments: [vault.address, router.address, wftm.address, '30', '300000000000000'],
+      constructorArguments: [vault.address, router.address, wftm.address, String(contractConfig.positionRouter.depositFee), String(contractConfig.positionRouter.minExecutionFee)],
     },
     {
       name: 'TokenManager',
       address: tokenManager.address,
-      constructorArguments: ['1'],
+      constructorArguments: [String(contractConfig.tokenManager.minAuthorizations)],
     },
     {
       name: 'FastPriceEvents',
@@ -99,10 +101,10 @@ task('verify:all', 'Verify all contracts', async (_, { ethers, run }) => {
       name: 'FastPriceFeed',
       address: fastPriceFeed.address,
       constructorArguments: [
-        String(5 * 60), // _priceDuration
-        String(60 * 60), // _maxPriceUpdateDelay
-        '0', // _minBlockInterval
-        '750', // _maxDeviationBasisPoints
+        String(contractConfig.fastPriceFeed.priceDuration), // _priceDuration
+        String(contractConfig.fastPriceFeed.maxPriceUpdateDelay), // _maxPriceUpdateDelay
+        String(contractConfig.fastPriceFeed.minBlockInterval), // _minBlockInterval
+        String(contractConfig.fastPriceFeed.maxDeviationBasisPoints), // _maxDeviationBasisPoints
         fastPriceEvents.address, // _fastPriceEvents
         tokenManager.address, // _tokenManager
         positionRouter.address,

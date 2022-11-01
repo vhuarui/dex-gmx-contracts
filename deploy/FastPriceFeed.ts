@@ -2,6 +2,7 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { sendTxn, expandDecimals } from '../utils/helper'
+import { contractConfigs } from '../config/contractConfigs'
 
 const deployFunction: DeployFunction = async function ({
   deployments,
@@ -11,6 +12,7 @@ const deployFunction: DeployFunction = async function ({
   console.log('Running FastPriceFeed deploy script')
 
   const tokens = require('../config/tokens.json')[network.name || 'fantomtest']
+  const contractConfig = contractConfigs[network.name || 'fantomtest']
   const { deploy } = deployments
 
   const { deployer } = await getNamedAccounts()
@@ -27,11 +29,11 @@ const deployFunction: DeployFunction = async function ({
     throw new Error('Invalid price maxCumulativeDeltaDiff')
   }
 
-  const updater = [deployer]
-  const keeper = [deployer]
+  const updater = contractConfig.fastPriceFeed.updater
+  const keeper = contractConfig.fastPriceFeed.keeper
   const updaters = updater.concat(keeper)
 
-  const signers = [deployer]
+  const signers = contractConfig.fastPriceFeed.signer
 
   const fastPriceEvents = await ethers.getContract('FastPriceEvents')
   const tokenManager = await ethers.getContract('TokenManager')
@@ -46,10 +48,10 @@ const deployFunction: DeployFunction = async function ({
     skipIfAlreadyDeployed: false,
     // waitConfirmations: 3,
     args: [
-      5 * 60, // _priceDuration
-      60 * 60, // _maxPriceUpdateDelay
-      0, // _minBlockInterval
-      750, // _maxDeviationBasisPoints
+      contractConfig.fastPriceFeed.priceDuration, // _priceDuration
+      contractConfig.fastPriceFeed.maxPriceUpdateDelay, // _maxPriceUpdateDelay
+      contractConfig.fastPriceFeed.minBlockInterval, // _minBlockInterval
+      contractConfig.fastPriceFeed.maxDeviationBasisPoints, // _maxDeviationBasisPoints
       fastPriceEvents.address, // _fastPriceEvents
       tokenManager.address, // _tokenManager
       positionRouter.address,
@@ -60,8 +62,8 @@ const deployFunction: DeployFunction = async function ({
 
   const secondaryPriceFeed = await ethers.getContract('FastPriceFeed')
 
-  await sendTxn(secondaryPriceFeed.initialize(1, signers, updaters), 'secondaryPriceFeed.initialize')
-  await sendTxn(secondaryPriceFeed.setMaxTimeDeviation(60 * 60), 'secondaryPriceFeed.setMaxTimeDeviation')
+  await sendTxn(secondaryPriceFeed.initialize(contractConfig.fastPriceFeed.minAuthorizations, signers, updaters), 'secondaryPriceFeed.initialize')
+  await sendTxn(secondaryPriceFeed.setMaxTimeDeviation(contractConfig.fastPriceFeed.maxTimeDeviation), 'secondaryPriceFeed.setMaxTimeDeviation')
 
   await sendTxn(
     positionRouter.setPositionKeeper(secondaryPriceFeed.address, true),
@@ -84,13 +86,12 @@ const deployFunction: DeployFunction = async function ({
     'secondaryPriceFeed.setTokens',
   )
   await sendTxn(secondaryPriceFeed.setVaultPriceFeed(vaultPriceFeed.address), 'secondaryPriceFeed.setVaultPriceFeed')
-  await sendTxn(secondaryPriceFeed.setMaxTimeDeviation(60 * 60), 'secondaryPriceFeed.setMaxTimeDeviation')
   await sendTxn(
-    secondaryPriceFeed.setSpreadBasisPointsIfInactive(50),
+    secondaryPriceFeed.setSpreadBasisPointsIfInactive(contractConfig.fastPriceFeed.spreadBasisPointsIfInactive),
     'secondaryPriceFeed.setSpreadBasisPointsIfInactive',
   )
   await sendTxn(
-    secondaryPriceFeed.setSpreadBasisPointsIfChainError(500),
+    secondaryPriceFeed.setSpreadBasisPointsIfChainError(contractConfig.fastPriceFeed.spreadBasisPointsIfChainError),
     'secondaryPriceFeed.setSpreadBasisPointsIfChainError',
   )
   await sendTxn(
@@ -100,7 +101,7 @@ const deployFunction: DeployFunction = async function ({
     ),
     'secondaryPriceFeed.setMaxCumulativeDeltaDiffs',
   )
-  await sendTxn(secondaryPriceFeed.setPriceDataInterval(5 * 60), 'secondaryPriceFeed.setPriceDataInterval')
+  await sendTxn(secondaryPriceFeed.setPriceDataInterval(contractConfig.fastPriceFeed.priceDataInterval), 'secondaryPriceFeed.setPriceDataInterval')
 
   for (const token of tokenArr) {
     await sendTxn(

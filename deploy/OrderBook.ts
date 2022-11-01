@@ -3,6 +3,7 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { sendTxn, expandDecimals } from '../utils/helper'
+import { contractConfigs } from '../config/contractConfigs'
 
 const deployFunction: DeployFunction = async function ({
   deployments,
@@ -16,6 +17,7 @@ const deployFunction: DeployFunction = async function ({
 
   const { deployer } = await getNamedAccounts()
   // console.log('Deployer:', deployer)
+  const contractConfig = contractConfigs[network.name || 'fantomtest']
 
   const { address } = await deploy('OrderBook', {
     from: deployer,
@@ -40,8 +42,8 @@ const deployFunction: DeployFunction = async function ({
       vault.address, // vault
       tokens.nativeToken.address, // weth
       usdg.address, // usdg
-      parseUnits('0.0003', 18), // 0.0003
-      expandDecimals(10, 30), // min purchase token amount usd
+      contractConfig.orderBook.minExecutionFee, // 0.0003
+      contractConfig.orderBook.minPurchaseTokenAmountUsd, // min purchase token amount usd
     ),
     'orderBook.initialize',
   )

@@ -2,19 +2,21 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { sendTxn } from '../utils/helper'
+import { contractConfigs } from '../config/contractConfigs'
 
-const deployFunction: DeployFunction = async function ({ deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
+const deployFunction: DeployFunction = async function ({ deployments, network, getNamedAccounts }: HardhatRuntimeEnvironment) {
   console.log('Running GlpManager deploy script')
   const { deploy } = deployments
 
   const { deployer } = await getNamedAccounts()
   // console.log('Deployer:', deployer)
+  const contractConfig = contractConfigs[network.name || 'fantomtest']
 
   const vault = await ethers.getContract('Vault')
   const usdg = await ethers.getContract('USDG')
   const glp = await ethers.getContract('GLP')
 
-  const cooldownDuration = 15 * 60
+  const cooldownDuration = contractConfig.glpManager.cooldownDuration
 
   const { address } = await deploy('GlpManager', {
     from: deployer,
