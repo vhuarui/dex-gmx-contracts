@@ -81,21 +81,32 @@ const config: HardhatUserConfig = {
         url: 'https://rpc.testnet.fantom.network',
       },
     },
-    hecotest: {
-      url: `https://http-testnet.hecochain.com`,
-      accounts,
-    },
     bsctest: {
       url: `https://data-seed-prebsc-1-s1.binance.org:8545/`,
       accounts,
+      verify: {
+        etherscan: {
+          apiKey: process.env.BSC_SCAN_KEY ? process.env.BSC_SCAN_KEY : '',
+        },
+      },
     },
     bscmainnet: {
       url: `https://bsc-dataseed.binance.org/`,
       accounts,
+      verify: {
+        etherscan: {
+          apiKey: process.env.BSC_SCAN_KEY ? process.env.BSC_SCAN_KEY : '',
+        },
+      },
     },
     fantomtest: {
       url: `https://rpc.testnet.fantom.network`,
       accounts,
+      verify: {
+        etherscan: {
+          apiKey: process.env.FANTOMSCAN_API_KEY ? process.env.FANTOMSCAN_API_KEY : '',
+        },
+      },
     },
     localhost: {
       url: `http://localhost:8545`,
@@ -109,16 +120,6 @@ const config: HardhatUserConfig = {
   typechain: {
     outDir: 'typechain',
     target: 'ethers-v5',
-  },
-  etherscan: {
-    apiKey: {
-      kovan: process.env.ETH_SCAN_KEY ? process.env.ETH_SCAN_KEY : '',
-      rinkeby: process.env.ETH_SCAN_KEY ? process.env.ETH_SCAN_KEY : '',
-      ropsten: process.env.ETH_SCAN_KEY ? process.env.ETH_SCAN_KEY : '',
-      bsc: process.env.BSC_SCAN_KEY ? process.env.BSC_SCAN_KEY : '',
-      bscTestnet: process.env.BSC_SCAN_KEY ? process.env.BSC_SCAN_KEY : '',
-      ftmTestnet: process.env.FANTOMSCAN_API_KEY ? process.env.FANTOMSCAN_API_KEY : '',
-    },
   },
   gasReporter: {
     enabled: true,

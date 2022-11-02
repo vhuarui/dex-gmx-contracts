@@ -1,5 +1,4 @@
 import './accounts'
-import './verify-all'
 import './deploy-test-token'
 import './deploy-test-wftm'
 import './add-liquidity'
