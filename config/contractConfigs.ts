@@ -58,6 +58,9 @@ export const contractConfigs: { [networkName: string]: any } = {
       maxTokenSupply: 0,
       maxMarginFeeBasisPoints: 500,
     },
+    priceFeedTimelock: {
+      buffer: 24 * 60 * 60,
+    },
   },
   localhost: {
     vault: {
@@ -114,6 +117,9 @@ export const contractConfigs: { [networkName: string]: any } = {
       buffer: 24 * 60 * 60,
       maxTokenSupply: 0,
       maxMarginFeeBasisPoints: 500,
+    },
+    priceFeedTimelock: {
+      buffer: 24 * 60 * 60,
     },
   },
 }
