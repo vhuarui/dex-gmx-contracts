@@ -76,7 +76,6 @@ const deployFunction: DeployFunction = async function ({
     vaultPriceFeed.setSecondaryPriceFeed(secondaryPriceFeed.address),
     'vaultPriceFeed.setSecondaryPriceFeed',
   )
-  await sendTxn(vaultPriceFeed.setIsAmmEnabled(false), 'vaultPriceFeed.setIsAmmEnabled')
 
   await sendTxn(
     secondaryPriceFeed.setTokens(
@@ -104,16 +103,6 @@ const deployFunction: DeployFunction = async function ({
   await sendTxn(secondaryPriceFeed.setPriceDataInterval(contractConfig.fastPriceFeed.priceDataInterval), 'secondaryPriceFeed.setPriceDataInterval')
 
   for (const token of tokenArr) {
-    await sendTxn(
-      vaultPriceFeed.setTokenConfig(
-        token.address, // _token
-        token.priceFeed, // _priceFeed
-        token.priceDecimals, // _priceDecimals
-        token.isStrictStable, // _isStrictStable
-      ),
-      `vaultPriceFeed.setTokenConfig(${token.name}) ${token.address} ${token.priceFeed}`,
-    )
-
     await sendTxn(
       vault.setTokenConfig(
         token.address, // _token
