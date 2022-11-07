@@ -47,6 +47,7 @@ const deployFunction: DeployFunction = async function ({
     ),
     'orderBook.initialize',
   )
+  await sendTxn(router.addPlugin(orderBook.address), 'router.addPlugin(orderBook)')
 }
 
 export default deployFunction
