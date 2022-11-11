@@ -36,6 +36,8 @@ const deployFunction: DeployFunction = async function ({
       stakedGmxTracker.initialize([gmx.address, esGmx.address], stakedGmxDistributor.address),
       'stakedGmxTracker.initialize',
     )
+  } else {
+    console.log('StakedGmxTracker already initialized')
   }
   await sendTxn(stakedGmxDistributor.updateLastDistributionTime(), 'StakedGmxDistributor.updateLastDistributionTime')
 

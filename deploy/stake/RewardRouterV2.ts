@@ -65,6 +65,8 @@ const deployFunction: DeployFunction = async function ({
       ),
       'rewardRouter.initialize',
     )
+  } else {
+    console.log('RewardRouter already initialized')
   }
 
   await sendTxn(glpManager.setHandler(rewardRouter.address, true), 'glpManager.setHandler(rewardRouter)')

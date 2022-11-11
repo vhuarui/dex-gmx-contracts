@@ -31,6 +31,8 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
       stakedGlpTracker.initialize([feeGlpTracker.address], stakedGlpDistributor.address),
       'stakedGlpTracker.initialize',
     )
+  } else {
+    console.log('StakedGlpTracker already initialized')
   }
   await sendTxn(stakedGlpDistributor.updateLastDistributionTime(), 'feeGlpDistributor.updateLastDistributionTime')
 

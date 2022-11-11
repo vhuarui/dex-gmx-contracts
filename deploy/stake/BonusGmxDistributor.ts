@@ -32,6 +32,8 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
       bonusGmxTracker.initialize([stakedGmxTracker.address], bonusGmxDistributor.address),
       'bonusGmxTracker.initialize',
     )
+  } else {
+    console.log('BonusGmxTracker Already initialized')
   }
   await sendTxn(bonusGmxDistributor.updateLastDistributionTime(), 'bonusGmxDistributor.updateLastDistributionTime')
 

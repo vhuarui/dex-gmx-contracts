@@ -38,6 +38,8 @@ const deployFunction: DeployFunction = async function ({
       feeGmxTracker.initialize([bonusGmxTracker.address, bnGmx.address], feeGmxDistributor.address),
       'feeGmxTracker.initialize',
     )
+  } else {
+    console.log('FeeGmxTracker already initialized')
   }
   await sendTxn(feeGmxDistributor.updateLastDistributionTime(), 'feeGmxDistributor.updateLastDistributionTime')
 }

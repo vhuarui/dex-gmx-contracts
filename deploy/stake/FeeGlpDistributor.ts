@@ -29,6 +29,8 @@ const deployFunction: DeployFunction = async function ({network, deployments, ge
   const feeGlpDistributor = await ethers.getContract('FeeGlpDistributor')
   if (!(await feeGlpTracker.isInitialized())) {
     await sendTxn(feeGlpTracker.initialize([glp.address], feeGlpDistributor.address), 'feeGlpTracker.initialize')
+  } else {
+    console.log('FeeGlpTracker already initialized')
   }
   await sendTxn(feeGlpDistributor.updateLastDistributionTime(), "feeGlpDistributor.updateLastDistributionTime")
 }
