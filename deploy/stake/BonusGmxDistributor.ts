@@ -15,7 +15,7 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
   const stakedGmxTracker = await ethers.getContract('StakedGmxTracker')
 
   const { address } = await deploy('BonusGmxDistributor', {
-    contract: 'RewardDistributor',
+    contract: 'BonusDistributor',
     from: deployer,
     log: true,
     deterministicDeployment: false,
