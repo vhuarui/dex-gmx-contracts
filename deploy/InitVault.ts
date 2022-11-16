@@ -2,7 +2,7 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { contractConfigs } from '../config/contractConfigs'
-import { sendTxn, toUsd } from '../utils/helper'
+import { sendTxn } from '../utils/helper'
 
 const deployFunction: DeployFunction = async function ({ network, getNamedAccounts }: HardhatRuntimeEnvironment) {
   console.log('Running Vault init script')
@@ -28,7 +28,7 @@ const deployFunction: DeployFunction = async function ({ network, getNamedAccoun
     'vault.initialize',
   )
 
-  await sendTxn(vault.setFundingRate(60 * 60, 100, 100), 'vault.setFundingRate')
+  await sendTxn(await vault.setMaxLeverage(1000000), 'setMaxLeverage')
   await sendTxn(
     vault.setFundingRate(
       contractConfig.vault.fundingInterval,
