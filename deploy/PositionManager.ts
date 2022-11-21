@@ -49,6 +49,7 @@ const deployFunction: DeployFunction = async function ({
     'positionManager.setOrderKeeper(orderKeeper)',
   )
   await sendTxn(positionManager.setLiquidator(liquidator.address, true), 'positionManager.setLiquidator(liquidator)')
+  await sendTxn(vault.setInPrivateLiquidationMode(true), 'vault.setInPrivateLiquidationMode(true)')
   await sendTxn(vault.setLiquidator(positionManager.address, true), 'vault.setLiquidator(positionManager, true)')
   await sendTxn(router.addPlugin(positionManager.address), 'router.addPlugin(positionManager)')
 
