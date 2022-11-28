@@ -37,7 +37,10 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
   }
   await sendTxn(bonusGmxDistributor.updateLastDistributionTime(), 'bonusGmxDistributor.updateLastDistributionTime')
 
-  await sendTxn(bonusGmxDistributor.setBonusMultiplier(10000), 'bonusGmxDistributor.setBonusMultiplier')
+  await sendTxn(
+    bonusGmxDistributor.setBonusMultiplier(10000, { gasLimit: 900000 }),
+    'bonusGmxDistributor.setBonusMultiplier',
+  )
   await sendTxn(
     bnGmx.mint(bonusGmxDistributor.address, expandDecimals(15 * 1000 * 1000, 18)),
     'bnGmx.mint(bonusGmxDistributor)',
