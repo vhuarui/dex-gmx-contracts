@@ -22,6 +22,7 @@ const deployFunction: DeployFunction = async function ({ deployments, getNamedAc
   console.log('EsGMX deployed at ', address)
 
   const esGmx = await ethers.getContract('EsGMX')
+  await sendTxn(esGmx.setInPrivateTransferMode(true), "esGmx.setInPrivateTransferMode")
   await sendTxn(esGmx.setMinter(deployer, true), 'esGmx.setMinter(deployer)')
 }
 
