@@ -8,3 +8,8 @@ import './set-prices-with-bits'
 import './set-fees'
 import './gen-account'
 import './set-spread'
+import './set-max-global-sizes'
+import './contracts-address'
+import './withdraw-fees'
+
+import './stake'
