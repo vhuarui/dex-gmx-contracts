@@ -45,4 +45,11 @@ task('init:pair', 'Init Swap Pair').setAction(async function (
     ),
     'addLiquidity',
   )
+
+  const swap_factor = (await getContractAt(
+    'IUniswapV2Factory',
+    '0xA67679b8281A43F46fc886e9825f743010eB552b',
+  )) as IUniswapV2Factory
+  const pair_address = await swap_factor.getPair(gmx.address, wftm.address)
+  console.log('pair address', pair_address)
 })
